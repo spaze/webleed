@@ -1,0 +1,10 @@
+http://www.highcharts.com/download/
+jquery adapter
+plotlines or bands
+datetime axis
+logarithmic axis
+tooltip
+touch
+ms touch
+area
+exporting
