@@ -20,11 +20,11 @@ options.add_option('--port', dest='port', help='Target port of the scan')
 options.add_option('--start', dest='start', help='Start time of the scan')
 options.add_option('--total', dest='total', help='Total hosts scanned')
 options.add_option('--json', '-j', dest='json_file', help='Load data from this json file')
-options.add_option('--networks', '-n', dest='networks_file', help='Load networks from this file')
+options.add_option('--masscan-conf', '-m', dest='masscan_conf_file', help='Load networks from this masscan config file')
 opts, args = options.parse_args()
 
 def main():
-	if not opts.scan_id or not opts.json_file or not opts.networks_file:
+	if not opts.scan_id or not opts.json_file or not opts.masscan_conf_file:
 		options.print_help()
 		return
 
@@ -46,11 +46,11 @@ def main():
 	print "UPDATE scans SET start_time = '%s', end_time = TIMESTAMP WITH TIME ZONE 'epoch' + %s * INTERVAL '1 second' WHERE id = %s;" \
 		% (opts.start, end_time, opts.scan_id)
 
-	with open(opts.networks_file) as f:
+	with open(opts.masscan_conf_file) as f:
 		networks = f.readlines()
 	print "BEGIN;"
 	for network in networks:
-		print "INSERT INTO networks (scan_id, network) VALUES (%s, '%s');" % (opts.scan_id, network.strip())
+		print "INSERT INTO networks (scan_id, network) VALUES (%s, '%s');" % (opts.scan_id, network.strip().replace('range = ', ''))
 	print "COMMIT;"
 
 if __name__ == '__main__':
