@@ -1,34 +1,30 @@
-cd ripe \
-&& wget ftp://ftp.ripe.net/ripe/dbase/split/ripe.db.inetnum.gz \
-&& gunzip ripe.db.inetnum.gz \
-&& php parse.php \
-&& python parse-cidr.py \
-&& cd .. \
-&& awk '{print "range = " $0}' ripe/ripe.cz.cidr > ripe.cz.cidr \
-&& sudo ../masscan/bin/masscan -p443 --conf ripe.cz.cidr --rate=1000 --output-format greppable --output-file massoutput \
-&& grep -oP "(?<=Host: )\d+\.\d+.\d+.\d+" massoutput > czip443 \
-&& time ./ssltest.py --input czip443 --json data.json --timeout 1 --threads 1000 \
+SELECT SUM(len) - 5600 FROM (SELECT power(2, 32 - masklen(network)) AS len FROM networks WHERE scan_id = 98) f
 
-
-
-time ./ssltest.py --input ripe/ripe.cz.cidr --json data.json --timeout 1 --threads 1000
-
-sudo ~/masscan/bin/masscan -p443 --conf ripe/ripe.cz.cidr --rate=1000 --output-format greppable --output-file massoutput
-grep -oP "(?<=Host: )\d+\.\d+.\d+.\d+" massoutput > czip443
-time ./ssltest.py --input czip443 --json data.json --timeout 1 --threads 1000
-
-
-cd ripe \
-&& wget ftp://ftp.ripe.net/ripe/dbase/split/ripe.db.inetnum.gz \
-&& gunzip ripe.db.inetnum.gz \
-&& php parse.php \
-&& python parse-cidr.py \
-&& cd .. \
-&& awk '{print "range = " $0}' ripe/ripe.cz.cidr > ripe.cz.cidr \
-&& sudo ../masscan/bin/masscan -p465,993,995 --conf ripe.cz.cidr --rate=1000 --output-format greppable --output-file massoutput \
-&& grep "Ports: 465" massoutput | grep -oP "(?<=Host: )\d+\.\d+.\d+.\d+" massoutput > czip465 \
-&& grep "Ports: 993" massoutput | grep -oP "(?<=Host: )\d+\.\d+.\d+.\d+" massoutput > czip993 \
-&& grep "Ports: 995" massoutput | grep -oP "(?<=Host: )\d+\.\d+.\d+.\d+" massoutput > czip995 \
-&& time ./ssltest.py --input czip465 --port 465 --json data465.json --timeout 1 --threads 1000 \
-&& time ./ssltest.py --input czip993 --port 993 --json data993.json --timeout 1 --threads 1000 \
-&& time ./ssltest.py --input czip995 --port 995 --json data995.json --timeout 1 --threads 1000 \
+SELECT CONCAT(
+'INSERT INTO cz_michalspacek.webleed (date, port, vulnerable, total) VALUES
+(''2014-06-20'', null, ',
+(SELECT COUNT(*) FROM (SELECT DISTINCT h.host FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND h.vulnerable) v2),
+', ',
+(SELECT COUNT(*) FROM (SELECT DISTINCT h.host FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20') t2),
+'),
+(''2014-06-20'', 443, ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 443 AND h.vulnerable),
+', ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 443),
+'),
+(''2014-06-20'', 465, ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 465 AND h.vulnerable),
+', ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 465),
+'),
+(''2014-06-20'', 993, ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 993 AND h.vulnerable),
+', ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 993),
+'),
+(''2014-06-20'', 995, ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 995 AND h.vulnerable),
+', ',
+(SELECT COUNT(*) FROM hosts h JOIN scans s on h.scan_id = s.id WHERE s.end_time::date = '2014-06-20' AND s.port = 995),
+');'
+);
