@@ -1,0 +1,3 @@
+127.0.0.1
+# The ip address of the scanner, it will be stored in the database for informative purposes only
+# Only the first line is used
