@@ -38,6 +38,7 @@ I'll be happy for a link back to my site, but it's not required.
 
 ## Run it
 1. Run `scan.sh`
+  1. `masscan` displays how many hosts it's scanning (`Scanning 5534556 hosts`), copy the number and run `echo 5534556 > data/total`
 2. Wait
 3. Run `parse.sh`
 4. Grab `data<YYYY-MM-DD>.tar.bz2`
