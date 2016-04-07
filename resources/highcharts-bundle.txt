@@ -13,4 +13,7 @@ You won't need this list unless you want to build a website similar to mine.
 - Touch
 - MS touch
 - Area
-- Exporting
+- Exporting (requires CSP form-action https://export.highcharts.com when fallbackToExportServer is enabled, which by default is)
+- Offline exporting (requires CSP img-src 'blob:')
+
+When your site is accessible via HTTPS don't forget to change exporting.url, by default it points to HTTP server and that throws mixed content warnings.
